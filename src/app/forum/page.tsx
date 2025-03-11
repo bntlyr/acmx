@@ -1,25 +1,21 @@
-"use client"
+import { PostList } from "~/components/Forum/post-list"
+import { PostFilters } from "~/components/Forum/post-filters"
+import { CreatePostButton } from "~/components/Forum/create-post-button"
 
-import { QuestionCard } from "~/components/Forum/question-card"
-import { Button } from "~/components/ui/button"
-import { useQuestions } from "~/lib/question-context"
-import Link from "next/link"
-
-export default function Home() {
-  const { questions } = useQuestions()
-
+export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Recent Questions</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Forum Discussions</h1>
+        <CreatePostButton />
       </div>
-      {questions.slice(0, 5).map((question) => (
-        <QuestionCard key={question.id} {...question} />
-      ))}
-      <div className="mt-8 text-center">
-        <Button asChild>
-          <Link href="/forum/questions">View All Questions</Link>
-        </Button>
+      <div className="grid gap-8 md:grid-cols-4">
+        <div className="md:col-span-1">
+          <PostFilters />
+        </div>
+        <div className="md:col-span-3">
+          <PostList />
+        </div>
       </div>
     </div>
   )

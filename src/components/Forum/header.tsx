@@ -1,113 +1,68 @@
 "use client"
 
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Menu, Search, X } from 'lucide-react'
 import Link from "next/link"
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-
-function MobileNav() {
-  return (
-    <div className="flex flex-col space-y-3">
-      <Link
-        href="/forum"
-        className="text-sm font-medium hover:underline"
-      >
-        Home
-      </Link>
-      <Link
-        href="/forum/questions"
-        className="text-sm font-medium hover:underline"
-      >
-        Questions
-      </Link>
-      <Link
-        href="/forum/topics"
-        className="text-sm font-medium hover:underline"
-      >
-        Topics
-      </Link>
-      <Link
-        href="/forum/search"
-        className="text-sm font-medium hover:underline"
-      >
-        Search
-      </Link>
-    </div>
-  )
-}
+import { useSession } from "next-auth/react"
+import { Menu } from "lucide-react"
+import { Button } from "~/components/ui/button"
+import { UserNav } from "./user-nav"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "~/components/ui/sheet"
 
 export function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const router = useRouter()
+  const { data: session, status } = useSession()
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
-      setIsSearchOpen(false)
-    }
-  }
+  const isAdmin = session?.user?.role === "ADMIN"
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+      <div className="container flex h-16 items-center">
         <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
+          <SheetTrigger asChild className="mr-2 md:hidden">
+            <Button variant="ghost" size="icon">
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
+              <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[80%] max-w-sm pt-14">
-            <MobileNav />
+          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <SheetHeader>
+              <SheetTitle>Menu</SheetTitle>
+              <SheetDescription>Navigate the forum</SheetDescription>
+            </SheetHeader>
+            <nav className="flex flex-col gap-4 mt-6">
+              <Link href="/forum" className="text-sm">
+                Home
+              </Link>
+              <Link href="/forum/posts" className="text-sm">
+                My Questions
+              </Link>
+              <Link href="/forum/search" className="text-sm">
+                Search
+              </Link>
+              {isAdmin && (
+                <Link href="/forum/admin/dashboard" className="text-sm">
+                  Admin
+                </Link>
+              )}
+              <Link href="/forum/profile" className="text-sm">
+                Profile
+              </Link>
+            </nav>
           </SheetContent>
         </Sheet>
-        <Link href="/forum" className="mr-6 flex items-center space-x-2">
-          <span className="hidden font-bold sm:inline-block">Forum App</span>
-        </Link>
-        <div className="flex flex-1 items-center justify-end md:justify-center">
-          <form
-            onSubmit={handleSearch}
-            className={`flex w-full max-w-sm items-center md:max-w-2xl transition-all duration-300 ease-in-out ${
-              isSearchOpen ? "scale-100 opacity-100" : "scale-95 opacity-0 md:scale-100 md:opacity-100"
-            }`}
-          >
-            <div className="relative flex flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search questions..."
-                className="w-full pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button type="submit" className="ml-2">
-              Search
-            </Button>
-          </form>
+        <div className="flex items-center gap-2">
+          <Link href="/forum" className="font-semibold text-xl">
+            ACMX FORUM
+          </Link>
         </div>
-        <div className="flex items-center justify-end space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-          >
-            {isSearchOpen ? (
-              <X className="h-5 w-5" />
+        <div className="flex flex-1 items-center justify-end space-x-4">
+          <div className="flex items-center space-x-4">
+            {status === "authenticated" ? (
+              <UserNav user={session.user} />
             ) : (
-              <Search className="h-5 w-5" />
+              <Link href="/api/forum/auth/signin">
+                <Button>Sign In</Button>
+              </Link>
             )}
-            <span className="sr-only">Toggle search</span>
-          </Button>
-          <Button variant="default" asChild className={isSearchOpen ? "hidden md:flex" : "flex"}>
-            <Link href="/forum/questions/ask">Ask a Question</Link>
-          </Button>
+          </div>
         </div>
       </div>
     </header>
