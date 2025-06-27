@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { GithubIcon, Link, RocketIcon } from 'lucide-react';
+import { GithubIcon, RocketIcon } from 'lucide-react';
 import Image from "next/image";
 import courseJSON from "public/data/json/courses.json";
 import { useEffect, useState } from 'react';
