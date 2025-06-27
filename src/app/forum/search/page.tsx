@@ -49,7 +49,7 @@ export default function SearchResults() {
         <p>No results found.</p>
       ) : (
         filteredQuestions.map((question) => (
-          <QuestionCard likes={0} dislikes={0} key={question.id} {...question} />
+          <QuestionCard likes={question.votes} dislikes={0} key={question.id} {...question} />
         ))
       )}
     </div>
