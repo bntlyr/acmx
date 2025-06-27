@@ -34,7 +34,7 @@ export default function AskQuestion() {
       createdAt: new Date().toISOString(),
     }
     addQuestion(newQuestion)
-    router.push('/')
+    router.push('/forum/questions')
   }
 
   const handleAddTag = () => {
